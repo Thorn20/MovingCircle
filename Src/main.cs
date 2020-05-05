@@ -54,20 +54,54 @@ namespace MovingCircle
 
         private void keypressed(object o, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Up) UpKey = true;
-            if (e.KeyCode == Keys.Down) DownKey = true;
-            if (e.KeyCode == Keys.Left) LeftKey = true;
-            if (e.KeyCode == Keys.Right) RightKey = true;
+            switch (e.KeyCode)
+            {
+                case Keys.Up:
+                    UpKey = true;
+                    break;
+
+                case Keys.Down:
+                    DownKey = true;
+                    break;
+
+                case Keys.Left:
+                    LeftKey = true;
+                    break;
+
+                case Keys.Right:
+                    RightKey = true;
+                    break;
+
+                default:
+                    break;
+            }
 
             e.Handled = true;
         }   
 
         private void keyreleased(object o, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Up) UpKey = false;
-            if (e.KeyCode == Keys.Down) DownKey = false;
-            if (e.KeyCode == Keys.Left) LeftKey = false;
-            if (e.KeyCode == Keys.Right) RightKey = false;
+            switch (e.KeyCode)
+            {
+                case Keys.Up:
+                    UpKey = false;
+                    break;
+
+                case Keys.Down:
+                    DownKey = false;
+                    break;
+
+                case Keys.Left:
+                    LeftKey = false;
+                    break;
+
+                case Keys.Right:
+                    RightKey = false;
+                    break;
+
+                default:
+                    break;
+            }
 
             e.Handled = true;
         }
