@@ -3,11 +3,11 @@ using System.Windows.Forms;
 
 namespace MovingCircle
 {
-    public class PlayerControl
+    public class InputControl
     {
         public bool UpKey, DownKey, LeftKey, RightKey;
 
-        public PlayerControl(Program p)
+        public InputControl(Program p)
         {
             UpKey = DownKey = LeftKey = RightKey = false;
 

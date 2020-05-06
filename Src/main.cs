@@ -15,7 +15,7 @@ namespace MovingCircle
         private BufferedGraphics Grafx;
         private Size WinSize = new Size( 400, 300);
 
-        PlayerControl PlayCont;
+        InputControl InControl;
 
         int CircleX = 20, CircleY = 20, CircleSize = 20, CircleSpeed = 2;
         
@@ -27,7 +27,7 @@ namespace MovingCircle
             
             this.SetStyle( ControlStyles.OptimizedDoubleBuffer, true);
 
-            PlayCont = new PlayerControl(this);
+            InControl = new InputControl(this);
 
             StepTimer = new System.Timers.Timer(100);
             StepTimer.Elapsed += GameStep;
@@ -44,10 +44,10 @@ namespace MovingCircle
         {
             StepStart = DateTime.Now;
 
-            if (PlayCont.UpKey) CircleY -= CircleSpeed;
-            if (PlayCont.DownKey) CircleY += CircleSpeed;
-            if (PlayCont.LeftKey) CircleX -= CircleSpeed;
-            if (PlayCont.RightKey) CircleX += CircleSpeed;
+            if (InControl.UpKey) CircleY -= CircleSpeed;
+            if (InControl.DownKey) CircleY += CircleSpeed;
+            if (InControl.LeftKey) CircleX -= CircleSpeed;
+            if (InControl.RightKey) CircleX += CircleSpeed;
 
             RenderFrame();
 
