@@ -12,12 +12,12 @@ namespace MovingCircle
         private double StepTime;
 
         private BufferedGraphicsContext Context;
-        private BufferedGraphics Grafx;
+        public BufferedGraphics Grafx;
         private Size WinSize = new Size( 400, 300);
 
         InputControl InControl;
 
-        int CircleX = 20, CircleY = 20, CircleSize = 20, CircleSpeed = 2;
+        Circle[] Circles;
         
         public Program() : base()
         {
@@ -38,16 +38,25 @@ namespace MovingCircle
             Context.MaximumBuffer = new Size(this.Width + 1, this.Height + 1);
 
             Grafx = Context.Allocate(this.CreateGraphics(), new Rectangle( 0, 0, this.Width, this.Height));
+
+            this.BuildCircles( 20 );
+        }
+
+        public void BuildCircles(int amount)
+        {
+            Random rng = new Random();
+
+            Circles = new Circle[amount];
+
+            for (int ii = 0; ii < Circles.Length; ii++)
+                Circles[ii] = new Circle( rng.Next( 0, this.Width), rng.Next( 0, this.Height), 20);
         }
 
         private void GameStep(object o, ElapsedEventArgs e)
         {
             StepStart = DateTime.Now;
 
-            if (InControl.UpKey) CircleY -= CircleSpeed;
-            if (InControl.DownKey) CircleY += CircleSpeed;
-            if (InControl.LeftKey) CircleX -= CircleSpeed;
-            if (InControl.RightKey) CircleX += CircleSpeed;
+            foreach (Circle C in Circles) C.Step(this);
 
             RenderFrame();
 
@@ -61,11 +70,7 @@ namespace MovingCircle
         {
             Grafx.Graphics.FillRectangle(Brushes.White, 0, 0, this.Width, this.Height);
 
-            Grafx.Graphics.FillEllipse( new SolidBrush(Color.Red), 
-                                         CircleX - (CircleSize/2), 
-                                         CircleY - (CircleSize/2), 
-                                         CircleSize, 
-                                         CircleSize);
+            foreach (Circle C in Circles) C.Draw(Grafx.Graphics);
 
             Grafx.Render(Graphics.FromHwnd(this.Handle));
         }
