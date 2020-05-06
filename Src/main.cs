@@ -8,102 +8,81 @@ namespace MovingCircle
     public class Program: Form  
     {
         private System.Timers.Timer StepTimer;
-        int CircleX = 20, CircleY = 20, CircleSize = 20, CircleSpeed = 5;
-        bool UpKey = false, DownKey = false, LeftKey = false, RightKey = false;
+        private DateTime StepStart, StepEnd;
+        private double StepTime;
 
-        public static void Main() 
-        {
-            Application.Run(new Program());
-        }
+        private BufferedGraphicsContext Context;
+        private BufferedGraphics Grafx;
+        private Size WinSize = new Size( 400, 300);
 
-        public Program()
+        PlayerControl PlayCont;
+
+        int CircleX = 20, CircleY = 20, CircleSize = 20, CircleSpeed = 2;
+        
+        public Program() : base()
         {
-            this.Paint += new PaintEventHandler(RenderScreen);
             this.Text = "Moving Circle";
+            this.Size = WinSize;
+            this.Resize += new EventHandler(this.OnResize);
+            
+            this.SetStyle( ControlStyles.OptimizedDoubleBuffer, true);
 
-            this.KeyDown += new KeyEventHandler(keypressed);
-            this.KeyUp += new KeyEventHandler(keyreleased);
+            PlayCont = new PlayerControl(this);
 
-            this.initTimer();
-        }
-
-        private void initTimer()
-        {
-            StepTimer = new System.Timers.Timer(60);
+            StepTimer = new System.Timers.Timer(100);
             StepTimer.Elapsed += GameStep;
             StepTimer.AutoReset = true;
             StepTimer.Enabled = true;
+
+            Context = BufferedGraphicsManager.Current;
+            Context.MaximumBuffer = new Size(this.Width + 1, this.Height + 1);
+
+            Grafx = Context.Allocate(this.CreateGraphics(), new Rectangle( 0, 0, this.Width, this.Height));
         }
 
         private void GameStep(object o, ElapsedEventArgs e)
         {
-            if (UpKey) CircleY -= CircleSpeed;
-            if (DownKey) CircleY += CircleSpeed;
-            if (LeftKey) CircleX -= CircleSpeed;
-            if (RightKey) CircleX += CircleSpeed;
+            StepStart = DateTime.Now;
 
-            this.Refresh();
+            if (PlayCont.UpKey) CircleY -= CircleSpeed;
+            if (PlayCont.DownKey) CircleY += CircleSpeed;
+            if (PlayCont.LeftKey) CircleX -= CircleSpeed;
+            if (PlayCont.RightKey) CircleX += CircleSpeed;
+
+            RenderFrame();
+
+            StepEnd = DateTime.Now;
+
+            StepTime = StepEnd.Subtract(StepStart).TotalMilliseconds;
+            StepTimer.Interval = StepTime;
         }
 
-        private void RenderScreen(object o, PaintEventArgs e) 
+        public void RenderFrame()
         {
-            Graphics g = e.Graphics; 
+            Grafx.Graphics.FillRectangle(Brushes.White, 0, 0, this.Width, this.Height);
 
-            g.FillEllipse( new SolidBrush(Color.Black), CircleX - (CircleSize/2), CircleY - (CircleSize/2), CircleSize, CircleSize);
+            Grafx.Graphics.FillEllipse( new SolidBrush(Color.Red), 
+                                         CircleX - (CircleSize/2), 
+                                         CircleY - (CircleSize/2), 
+                                         CircleSize, 
+                                         CircleSize);
+
+            Grafx.Render(Graphics.FromHwnd(this.Handle));
         }
 
-        private void keypressed(object o, KeyEventArgs e)
+        protected override void OnPaint( PaintEventArgs e) 
         {
-            switch (e.KeyCode)
-            {
-                case Keys.Up:
-                    UpKey = true;
-                    break;
+            Grafx.Render(e.Graphics);
+        }
 
-                case Keys.Down:
-                    DownKey = true;
-                    break;
-
-                case Keys.Left:
-                    LeftKey = true;
-                    break;
-
-                case Keys.Right:
-                    RightKey = true;
-                    break;
-
-                default:
-                    break;
-            }
-
-            e.Handled = true;
-        }   
-
-        private void keyreleased(object o, KeyEventArgs e)
+        private void OnResize(object o, EventArgs e)
         {
-            switch (e.KeyCode)
-            {
-                case Keys.Up:
-                    UpKey = false;
-                    break;
+            this.Size = WinSize;
+        }
 
-                case Keys.Down:
-                    DownKey = false;
-                    break;
-
-                case Keys.Left:
-                    LeftKey = false;
-                    break;
-
-                case Keys.Right:
-                    RightKey = false;
-                    break;
-
-                default:
-                    break;
-            }
-
-            e.Handled = true;
+        public static void Main() 
+        {
+            Application.Run(new Program());
         }
     }
 }
