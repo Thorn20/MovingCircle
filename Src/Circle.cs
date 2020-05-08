@@ -18,7 +18,7 @@ namespace MovingCircle
             direction = rng.Next(4);
         }
 
-        public void Step(Program p)
+        public void Step()
         {
             int Choice = rng.Next(100);
 
@@ -47,11 +47,6 @@ namespace MovingCircle
                 case 2: y--; break;
                 case 3: y++; break;
             }
-
-            if (x < 0) x = p.Width;
-            if (x > p.Width) x = 0;
-            if (y < 0) y = p.Height;
-            if (y > p.Height) y = 0;
         }
 
         public void Draw( Graphics g)
@@ -61,7 +56,7 @@ namespace MovingCircle
                                           size, 
                                           size);
 
-            g.DrawEllipse( new Pen(Color.Black), rec);
+            g.DrawEllipse( new Pen(Color.Black, 2), rec);
             g.FillEllipse( new SolidBrush(Color.Red), rec);
         }
     }
