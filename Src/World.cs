@@ -5,12 +5,14 @@ namespace MovingCircle
 {
     public class World
     {
+        public Program p;
         public int Width, Height;
 
         Circle[] Circles;
 
-        public World( int width, int height)
+        public World( Program p, int width, int height)
         {
+            this.p = p;
             this.Width = width;
             this.Height = height;
 
@@ -24,7 +26,22 @@ namespace MovingCircle
             Circles = new Circle[amount];
 
             for (int ii = 0; ii < Circles.Length; ii++)
-                Circles[ii] = new Circle( rng.Next( 0, this.Width), rng.Next( 0, this.Height), 20);
+            {
+                int x = rng.Next( 0, this.Width), y = rng.Next( 0, this.Height);
+
+                for (int jj = 0; jj < ii; jj++)
+                {
+                    double Distance = ( Math.Sqrt( Math.Abs( x - Circles[jj].X) + Math.Abs( y - Circles[jj].Y)));
+
+                    if( Distance <= 40)
+                    {
+                        x = rng.Next( 0, this.Width); 
+                        y = rng.Next( 0, this.Height);
+                    }
+                }
+
+                Circles[ii] = new Circle( p, x, y, 20);
+            }
         }
 
         public void Step()
@@ -33,10 +50,10 @@ namespace MovingCircle
             {
                 C.Step();
 
-                if (C.x < 4 + (C.size / 2)) C.x++;
-                if (C.x > (Width - 4) - (C.size / 2)) C.x--;
-                if (C.y < 4 + (C.size / 2)) C.y++;
-                if (C.y > (Height - 4) - (C.size / 2)) C.y--;
+                if (C.X < 4 + (C.Size / 2)) C.X++;
+                if (C.X > (Width - 4) - (C.Size / 2)) C.X--;
+                if (C.Y < 4 + (C.Size / 2)) C.Y++;
+                if (C.Y > (Height - 4) - (C.Size / 2)) C.Y--;
             }
         }
 

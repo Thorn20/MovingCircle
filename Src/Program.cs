@@ -15,9 +15,8 @@ namespace MovingCircle
 
         private Size WinSize = new Size( 800, 600);
 
-        InputControl InCtrl;
-        Gfx gfx;
-        public World GameWorld;
+        public GUI Gui;
+        public Gfx gfx;
         
         public Program() : base()
         {
@@ -26,8 +25,7 @@ namespace MovingCircle
             this.Resize += new EventHandler(this.OnResize);
             this.SetStyle( ControlStyles.OptimizedDoubleBuffer, true);
 
-            InCtrl = new InputControl(this);
-            GameWorld = new World( 1000, 1000);
+            Gui = new GUI(this);
             gfx = new Gfx(this);
 
             StepTimer = new System.Timers.Timer(1000 / StepLimit);
@@ -38,26 +36,24 @@ namespace MovingCircle
 
         private void GameStep(object o, ElapsedEventArgs e)
         {
-            //StepTimer.Enabled = false;
+            StepTimer.Enabled = false;
             StepStart = DateTime.Now;
 
-            GameWorld.Step();
-
-            if (InCtrl.UpKey == true && gfx.ViewPoint.Y > 0) 
-                gfx.ViewPoint.Y--;
-            if (InCtrl.LeftKey == true && gfx.ViewPoint.X > 0) 
-                gfx.ViewPoint.X--;
-            if (InCtrl.DownKey == true && gfx.ViewPoint.Y < (GameWorld.Height - gfx.WorldView.Height)) 
-                gfx.ViewPoint.Y++;
-            if (InCtrl.RightKey == true && gfx.ViewPoint.X < (GameWorld.Width - gfx.WorldView.Width)) 
-                gfx.ViewPoint.X++;
+            Gui.Step();
 
             StepEnd = DateTime.Now;
             StepTime = StepEnd.Subtract(StepStart).TotalMilliseconds;
-            if (StepTime < (1000 / StepLimit)) StepTime = (1000 / StepLimit);
-            StepsPerSec = (1000 / StepTime);            
-            StepTimer.Interval = StepTime;  
-            //StepTimer.Enabled = true;          
+
+            if (StepTime < (1000 / StepLimit)) 
+            {
+                StepTimer.Interval = (1000 / StepLimit) - StepTime; 
+                StepTime = (1000 / StepLimit);
+            }
+            else
+                StepTimer.Interval = StepTime; 
+
+            StepsPerSec = (1000 / StepTime);                       
+            StepTimer.Enabled = true;          
         }
 
         protected override void OnPaint( PaintEventArgs e) 

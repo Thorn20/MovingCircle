@@ -5,14 +5,16 @@ namespace MovingCircle
 {
     public class InputControl
     {
-        public bool UpKey, DownKey, LeftKey, RightKey;
+        public bool UpKey, DownKey, LeftKey, RightKey, RgtClk;
 
         public InputControl(Program p)
         {
-            UpKey = DownKey = LeftKey = RightKey = false;
+            UpKey = DownKey = LeftKey = RightKey = RgtClk = false;
 
             p.KeyDown += new KeyEventHandler(this.keypressed);
             p.KeyUp += new KeyEventHandler(this.keyreleased);
+            p.MouseDown += new MouseEventHandler(this.mousepressed);
+            p.MouseUp += new MouseEventHandler(this.mousereleased);
         }
 
         public void keypressed(object o, KeyEventArgs e)
@@ -67,6 +69,32 @@ namespace MovingCircle
             }
 
             e.Handled = true;
+        }
+
+        public void mousepressed(object o, MouseEventArgs e)
+        {
+            switch (e.Button)
+            {
+                case MouseButtons.Right:
+                    RgtClk = true;
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        public void mousereleased(object o, MouseEventArgs e)
+        {
+            switch (e.Button)
+            {
+                case MouseButtons.Right:
+                    RgtClk = false;
+                    break;
+
+                default:
+                    break;
+            }
         }
 
     }
