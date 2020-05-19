@@ -34,7 +34,7 @@ namespace MovingCircle
 
         public void Step()
         {
-            Energy -= 1 + (Velocity / 10) * (p.StepTime / 1000);
+            Energy -= 0.1 + (Velocity * 0.1);
 
             RandomChoice();
 
@@ -73,6 +73,11 @@ namespace MovingCircle
 
             X += Velocity * Math.Cos( Direction);
             Y += Velocity * Math.Sin( Direction);
+        }
+
+        public void OnCollide( )
+        {
+            Velocity = 0;
         }
 
         public void Draw( Graphics g)

@@ -17,7 +17,7 @@ namespace MovingCircle
             this.Width = width;
             this.Height = height;
 
-            BuildCircles( 5 );
+            BuildCircles( 20 );
         }
 
         public void BuildCircles(int amount)
@@ -50,6 +50,8 @@ namespace MovingCircle
             {
                 C.Step();
 
+                CheckCollisions(C);
+
                 if (C.X < (C.Size / 2)) 
                 { 
                     C.X = (C.Size / 2); 
@@ -69,14 +71,22 @@ namespace MovingCircle
                 {
                     C.Y = Height - (C.Size / 2);
                     C.Velocity = 0;
-                }
+                }                 
+            }    
 
-                
-            }
-            /*
             for (int ii = 0; ii < Circles.Count; ii++)
-                if (Circles[ii].Energy <= 0) Circles.Remove(Circles[ii]);
-            */
+                if (Circles[ii].Energy <= 0) Circles.Remove(Circles[ii]);        
+        }
+
+        public void CheckCollisions( Circle Target)
+        {
+            foreach (Circle Other in Circles)
+            {
+                double Distance = Math.Sqrt( Math.Pow( Target.X - Other.X, 2) + Math.Pow( Target.Y - Other.Y, 2));
+
+                if (Distance <= (Target.Size/2) + (Other.Size/2))
+                    Target.OnCollide( );
+            }                    
         }
 
         public void Draw( Graphics g)
