@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace MovingCircle
 {
@@ -7,8 +8,8 @@ namespace MovingCircle
     {
         public Program p;
         public Random rng;
-
-        public double X, Y, MaxVel, Velocity, Direction, Size;
+        public double X, Y, MaxVel, Velocity, Direction, Size, Energy;
+        public Region Collider;
 
         public Circle( Program p, int x, int y, int size)
         {
@@ -17,14 +18,24 @@ namespace MovingCircle
             this.Y = y;
             this.Size = size;
 
-            rng = new Random((int)( X * Y));
-            rng = new Random(rng.Next( 10000000, 99999999));
+            rng = new Random((int)( X * Y ));
             Direction = rng.NextDouble() * (2 * Math.PI);
-            MaxVel = rng.NextDouble();
+            MaxVel = ( rng.NextDouble() * 10 ) + 10;
+            Energy = 100;
+
+            GraphicsPath path = new GraphicsPath();
+            path.AddEllipse( new RectangleF((float)(-(Size/2)), 
+                                            (float)(-(Size/2)), 
+                                            (float)(Size), 
+                                            (float)(Size)));
+
+            Collider = new Region( path);
         }
 
         public void Step()
         {
+            Energy -= 1 + (Velocity / 10) * (p.StepTime / 1000);
+
             RandomChoice();
 
             ApplyMovement();
@@ -32,29 +43,22 @@ namespace MovingCircle
 
         void RandomChoice()
         {
-            int Choice = rng.Next(100);
+            int Choice = rng.Next(4);
 
-            switch (Choice)
-            {
-                case 0:
-                    Direction -= (MaxVel / Math.PI) * ( 1000 / p.StepTime);
-                    break;
-                
-                case 1:
-                    Direction += (MaxVel / Math.PI) * ( 1000 / p.StepTime);
-                    break;
+            if (Choice == 0) 
+                Velocity += MaxVel * (p.StepTime / 1000);
 
-                case 2:
-                    Velocity += MaxVel * ( 1000 / p.StepTime);
-                    break;
+            if (Choice == 1)
+                Velocity -= MaxVel * (p.StepTime / 1000);
 
-                case 3:
-                    Velocity -= MaxVel * ( 1000 / p.StepTime);
-                    break;
+            if (Choice == 2) 
+                Direction -= ((MaxVel) / Math.PI) * (p.StepTime / 1000);
 
-                default:
-                    break;
-            }
+            if (Choice == 3)
+                Direction += ((MaxVel) / Math.PI) * (p.StepTime / 1000);
+
+            //if (Choice == 4)
+            //    Velocity = 0;            
         }
 
         public void ApplyMovement()
@@ -73,13 +77,20 @@ namespace MovingCircle
 
         public void Draw( Graphics g)
         {
-            Rectangle rec = new Rectangle((int)(X - (Size/2)), 
-                                          (int)(Y - (Size/2)), 
-                                          (int)(Size), 
-                                          (int)(Size));
+            GraphicsContainer gc = g.BeginContainer();
+            g.TranslateTransform( (float)X, (float)Y);
+            g.RotateTransform( (float)( Direction * (360 / (2*Math.PI)) ));
+
+            RectangleF rec = new RectangleF((float)(-(Size/2)), 
+                                            (float)(-(Size/2)), 
+                                            (float)(Size), 
+                                            (float)(Size));
 
             g.DrawEllipse( new Pen(Color.Black, 2), rec);
             g.FillEllipse( new SolidBrush(Color.Red), rec);
+
+            g.FillEllipse( new SolidBrush(Color.Black), 5f, -2.5f, 5f, 5f);
+            g.EndContainer( gc);
         }
     }
 }

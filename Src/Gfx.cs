@@ -41,7 +41,7 @@ namespace MovingCircle
 
             p.Refresh();
 
-            FrameTimer = new System.Timers.Timer(1000 / FrameLimit);
+            FrameTimer = new System.Timers.Timer(1000);
             FrameTimer.Elapsed += RenderFrame;
             FrameTimer.AutoReset = true;
             FrameTimer.Enabled = true;

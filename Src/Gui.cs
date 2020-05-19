@@ -24,7 +24,7 @@ namespace MovingCircle
 
             InCtrl = new InputControl(p);
 
-            GameWorld = new World(p, 1000, 1000);
+            GameWorld = new World(p, 500, 500);
             WorldView = new Rectangle(10, 10, 500, 500);
             ViewPoint = new Point((GameWorld.Width / 2) - (WorldView.Width / 2), 
                                   (GameWorld.Height / 2) - (WorldView.Height / 2));
@@ -85,6 +85,12 @@ namespace MovingCircle
             g.DrawString( "FPS: " + fps.ToString("F2"), WritingFont, WritingBrush, 510, 10);
             
             g.DrawString( "SPS: " + sps.ToString("F2"), WritingFont, WritingBrush, 510, 30);
+
+            for ( int ii = 0; ii < GameWorld.Circles.Count; ii++)
+            {
+                double e = GameWorld.Circles[ii].Energy;
+                g.DrawString( ii + " : " + e.ToString("F2"), WritingFont, WritingBrush, 510, 70 + (20 * ii));
+            }
 
             g.DrawRectangle(new Pen(Color.Black), WorldView);
         }

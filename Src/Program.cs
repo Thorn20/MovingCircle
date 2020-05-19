@@ -28,7 +28,7 @@ namespace MovingCircle
             Gui = new GUI(this);
             gfx = new Gfx(this);
 
-            StepTimer = new System.Timers.Timer(1000 / StepLimit);
+            StepTimer = new System.Timers.Timer(1000);
             StepTimer.Elapsed += GameStep;
             StepTimer.AutoReset = true;
             StepTimer.Enabled = true;
